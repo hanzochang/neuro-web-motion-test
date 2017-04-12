@@ -13,7 +13,7 @@ addObjects();
 function init() {
   // scene, camera, rendererの設定
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 100 );
+  camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 0.1, 100 );
   camera.position.set(0, 0, 0);
 
   renderer = new THREE.WebGLRenderer();
@@ -22,20 +22,20 @@ function init() {
 
   // vr対応をする場合
   // Three.jsにVR関係の設定をAppend
-  controls = new THREE.VRControls(camera);
-  controls.standing = true;
-  effect = new THREE.VREffect(renderer);
-  effect.setSize(window.innerWidth, window.innerHeight);
-  manager = new WebVRManager(renderer, effect);
+  // controls = new THREE.VRControls(camera);
+  // controls.standing = true;
+  // effect = new THREE.VREffect(renderer);
+  // effect.setSize(window.innerWidth, window.innerHeight);
+  // manager = new WebVRManager(renderer, effect);
+
+  // vr対応しない場合
+  scene.add(camera);
 
   dolly = new THREE.Group();
-  dolly.position.set( 0, -1, 8 );
+  dolly.position.set( 0, -1, 5 );
   dolly.rotateZ = 10;
   scene.add(dolly);
   dolly.add(camera);
-  //
-  // vr対応しない場合
-  //scene.add(camera);
 
   // Resize用のハンドラ設定
   window.addEventListener('resize', onResize, true);
@@ -53,6 +53,8 @@ function addObjects(){
 
   centerPoints = createGrid(depth, gridBase, 20);
   createDiamondRect(centerPoints, gridBase, -4);
+  // createDiamondRect(centerPoints, gridBase, 4);
+  // createDiamondRect(centerPoints, gridBase, 2);
 }
 
 function createDiamondRect(centerPoints, gridBase, overrideDepth = null){
@@ -78,7 +80,7 @@ function createDiamondRect(centerPoints, gridBase, overrideDepth = null){
     scene.add( line );
     lines.push(line);
 
-    // createPoints(x+gridBase, y ,overrideDepth ? overrideDepth+0.1 : z+0.1);
+    createPoints(x+gridBase, y ,overrideDepth ? overrideDepth+0.1 : z+0.1);
   }
 }
 
@@ -90,7 +92,7 @@ function createPoints(x, y, z){
   star.z = z;
 
   starsGeometry.vertices.push( star )
-  var starsMaterial = new THREE.PointsMaterial( { color: 0xcccccc, size: 0.05 } )
+  var starsMaterial = new THREE.PointsMaterial( { color: 0xcccccc, size: 0.005 } )
   var starField = new THREE.Points( starsGeometry, starsMaterial );
   scene.add( starField );
 
@@ -262,48 +264,48 @@ function motionLineFactory(gridBase, speed, depth){
 }
 
 var motionLines = new Array;
-for (var i = 0; i < 100; i++){
-  mlf = new motionLineFactory(gridBase, 0.01, -8);
-  mlf.create();
-  rand1 = Math.random();
-  rand2 = Math.random();
-  var motionLineTest = new MotionLine(10*rand1, 0.07*rand2, mlf.rootVertices);
-  motionLines.push(motionLineTest);
-}
-for (var i = 0; i < 1000; i++){
-  mlf = new motionLineFactory(gridBase*2, 0.01, -7);
-  mlf.create();
-  rand1 = Math.random();
-  rand2 = Math.random();
-  var motionLineTest = new MotionLine(1*rand1, 0.01*rand2, mlf.rootVertices);
-  motionLines.push(motionLineTest);
-}
-for (var i = 0; i < 100; i++){
-  mlf = new motionLineFactory(gridBase, 0.01, -6);
-  mlf.create();
-  rand1 = Math.random();
-  rand2 = Math.random();
-  var motionLineTest = new MotionLine(1*rand1, 0.03*rand2, mlf.rootVertices);
-  motionLines.push(motionLineTest);
-}
+// for (var i = 0; i < 100; i++){
+  // mlf = new motionLineFactory(gridBase, 0.01, -8);
+  // mlf.create();
+  // rand1 = Math.random();
+  // rand2 = Math.random();
+  // var motionLineTest = new MotionLine(1*rand1, 0.07*rand2, mlf.rootVertices);
+  // motionLines.push(motionLineTest);
+// }
+// for (var i = 0; i < 1000; i++){
+  // mlf = new motionLineFactory(gridBase*2, 0.01, -7);
+  // mlf.create();
+  // rand1 = Math.random();
+  // rand2 = Math.random();
+  // var motionLineTest = new MotionLine(1*rand1, 0.01*rand2, mlf.rootVertices);
+  // motionLines.push(motionLineTest);
+// }
+// for (var i = 0; i < 100; i++){
+  // mlf = new motionLineFactory(gridBase, 0.01, -6);
+  // mlf.create();
+  // rand1 = Math.random();
+  // rand2 = Math.random();
+  // var motionLineTest = new MotionLine(1*rand1, 0.03*rand2, mlf.rootVertices);
+  // motionLines.push(motionLineTest);
+// }
 
-for (var i = 0; i < 100; i++){
-  mlf = new motionLineFactory(gridBase, 0.01, -5);
-  mlf.create();
-  rand1 = Math.random();
-  rand2 = Math.random();
-  var motionLineTest = new MotionLine(2*rand1, 0.08*rand2, mlf.rootVertices);
-  motionLines.push(motionLineTest);
-}
+// for (var i = 0; i < 100; i++){
+  // mlf = new motionLineFactory(gridBase, 0.01, 1);
+  // mlf.create();
+  // rand1 = Math.random();
+  // rand2 = Math.random();
+  // var motionLineTest = new MotionLine(2*rand1, 0.08*rand2, mlf.rootVertices);
+  // motionLines.push(motionLineTest);
+// }
 
-for (var i = 0; i < 100; i++){
-  mlf = new motionLineFactory(gridBase, 0.01, 4);
-  mlf.create();
-  rand1 = Math.random();
-  rand2 = Math.random();
-  var motionLineTest = new MotionLine(1*rand1, 0.02*rand2, mlf.rootVertices);
-  motionLines.push(motionLineTest);
-}
+// for (var i = 0; i < 100; i++){
+  // mlf = new motionLineFactory(gridBase, 0.01, 4);
+  // mlf.create();
+  // rand1 = Math.random();
+  // rand2 = Math.random();
+  // var motionLineTest = new MotionLine(1*rand1, 0.3*rand2, mlf.rootVertices);
+  // motionLines.push(motionLineTest);
+// }
 
 
 function render() {
@@ -316,9 +318,10 @@ function render() {
   requestAnimationFrame(render);
 
   // VR対応は下記をやる
-  controls.update();
+  // controls.update();
   // effect.render(scene, camera);
-  manager.render(scene, camera);
+  // manager.render(scene, camera);
+  renderer.render(scene, camera);
 }
 render();
 
