@@ -136,6 +136,95 @@ function createGrid(depth, gridBase, gridGenPhase){
   return rectCenters;
 }
 
+function MotionLine(length, speed, routeVertices){
+  this.length = length;
+  this.speed = speed;
+  this.routeVertices = routeVertices;
+  this.currentRouteVerticesNum = 0;
+
+  var motionLineMaterial = new THREE.LineBasicMaterial({
+    color: 0x999999,
+    linewidth: 1
+  });
+
+  var motionLineGeometry = new THREE.Geometry();
+  var startVertice = this.routeVertices[0];
+  motionLineGeometry.vertices.push(
+    new THREE.Vector3(startVertice[0], startVertice[1], startVertice[2]),
+    new THREE.Vector3(startVertice[0], startVertice[1], startVertice[2])
+  );
+  this.motionLine = new THREE.Line(motionLineGeometry, motionLineMaterial);
+  scene.add( this.motionLine );
+
+  this.move = function() {
+    canNextVertices = true;
+    motionLine = this.motionLine;
+    if (this.currentRouteVerticesNum < routeVertices.length ) {
+      currentEndVertice = routeVertices[this.currentRouteVerticesNum + 1];
+      currentStartVertice = routeVertices[this.currentRouteVerticesNum];
+
+      if (this.isReachEndVerticeX(currentStartVertice, currentEndVertice, motionLine.geometry.vertices[0])){
+        motionLine.geometry.vertices[0].x += (currentEndVertice[0] - currentStartVertice[0]) * speed;
+        canNextVertices = false;
+      }
+
+      if (this.isReachEndVerticeY(currentStartVertice, currentEndVertice, motionLine.geometry.vertices[0])){
+        motionLine.geometry.vertices[0].y += (currentEndVertice[1] - currentStartVertice[1]) * speed;
+        canNextVertices = false;
+      }
+
+      if (this.isReachEndVerticeX(currentStartVertice, currentEndVertice, motionLine.geometry.vertices[1])){
+        motionLine.geometry.vertices[1].x += (currentEndVertice[0] - currentStartVertice[0]) * speed;
+        canNextVertices = false;
+      }
+
+      if (this.isReachEndVerticeY(currentStartVertice, currentEndVertice, motionLine.geometry.vertices[1])){
+        motionLine.geometry.vertices[1].y += (currentEndVertice[1] - currentStartVertice[1]) * speed;
+        canNextVertices = false;
+      }
+
+      if (canNextVertices){
+        this.currentRouteVerticesNum += 1;
+        currentEndVertice = routeVertices[this.currentRouteVerticesNum + 1];
+        currentStartVertice = routeVertices[this.currentRouteVerticesNum];
+
+        motionLine.geometry.vertices[0].x = routeVertices[this.currentRouteVerticesNum][0];
+        motionLine.geometry.vertices[0].y = routeVertices[this.currentRouteVerticesNum][1];
+
+        var addLengthX = (currentEndVertice[0] - currentStartVertice[0] >= 0) ? length : -length;
+        var addLengthY = (currentEndVertice[1] - currentStartVertice[1] >= 0) ? length : -length;
+        motionLine.geometry.vertices[1].x = routeVertices[this.currentRouteVerticesNum][0] + addLengthX;
+        motionLine.geometry.vertices[1].y = routeVertices[this.currentRouteVerticesNum][1] + addLengthY;
+      }
+      motionLine.geometry.verticesNeedUpdate = true;
+    }
+  }
+
+  this.isReachEndVerticeX = function(startVertice, endVertice, currentVertice) {
+    var comparePositiveness = ((endVertice[0] - startVertice[0]) >= 0);
+
+    if (comparePositiveness) {
+      if (currentVertice.x < currentEndVertice[0]){ return true; }
+    } else {
+      if (currentVertice.x > currentEndVertice[0]){ return true; }
+    }
+
+    return false;
+  }
+
+  this.isReachEndVerticeY = function(startVertice, endVertice, currentVertice) {
+    var comparePositiveness = ((endVertice[1] - startVertice[1]) >= 0);
+
+    if (comparePositiveness) {
+      if (currentVertice.y < currentEndVertice[1]){ return true; }
+    } else {
+      if (currentVertice.y > currentEndVertice[1]){ return true; }
+    }
+
+    return false;
+  }
+
+}
 
 function motionLineFactory(gridBase, speed, depth, rangeUnit = 4){
   this.gridBase = gridBase;
@@ -189,3 +278,57 @@ function motionLineFactory(gridBase, speed, depth, rangeUnit = 4){
   }
 
 }
+
+var motionLines = new Array;
+for (var i = 0; i < 300; i++){
+  mlf = new motionLineFactory(gridBase, 0.01, -8, 6);
+  mlf.create();
+  // console.log(mlf.rootVertices);
+  rand1 = Math.random();
+  rand2 = Math.random();
+  var motionLineTest = new MotionLine(1.2, 0.01*rand2, mlf.rootVertices);
+  motionLines.push(motionLineTest);
+}
+
+for (var i = 0; i < 100; i++){
+  mlf = new motionLineFactory(gridBase*2, 0.01, -4, 4);
+  mlf.create();
+  rand1 = Math.random();
+  rand2 = Math.random();
+  var motionLineTest = new MotionLine(gridBase*1.5, 0.005*rand2, mlf.rootVertices);
+  motionLines.push(motionLineTest);
+}
+
+// for (var j = 0; j < 10; j++){
+  // for (var i = 0; i < 10; i++){
+    // mlf = new motionLineFactory(gridBase, 0.01, 5-j, 4);
+    // mlf.create();
+    // rand1 = Math.random();
+    // rand2 = Math.random();
+    // var motionLineTest = new MotionLine(1.0, 0.01*rand2, mlf.rootVertices);
+    // motionLines.push(motionLineTest);
+  // }
+// }
+
+
+function render() {
+  for(var i = 0; i < motionLines.length; i++){
+    motionLines[i].move();
+  }
+
+  dolly.position.z -= 0.0025;
+  requestAnimationFrame(render);
+
+  // VR対応は下記をやる
+  controls.update();
+  // effect.render(scene, camera);
+  manager.render(scene, camera);
+}
+render();
+
+function onResize(e) {
+  effect.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+}
+
