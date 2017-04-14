@@ -7,8 +7,8 @@ function addObjects(){
   });
   //material =  new THREE.LineDashedMaterial( { color: 0xffffff, dashSize: 10, gapSize: 0.9 } );
 
-  // centerPoints = createGrid(depth, gridBase, 5);
-  // createDiamondRect(centerPoints, gridBase, -4);
+  centerPoints = createGrid(depth, gridBase, 20);
+  createDiamondRect(centerPoints, gridBase, -4);
 }
 
 function createDiamondRect(centerPoints, gridBase, overrideDepth = null){
@@ -34,7 +34,7 @@ function createDiamondRect(centerPoints, gridBase, overrideDepth = null){
     scene.add( line );
     lines.push(line);
 
-    // createPoints(x+gridBase, y ,overrideDepth ? overrideDepth+0.1 : z+0.1);
+    createPoints(x+gridBase, y ,overrideDepth ? overrideDepth+0.1 : z+0.1);
   }
 }
 
@@ -46,7 +46,7 @@ function createPoints(x, y, z){
   star.z = z;
 
   starsGeometry.vertices.push( star )
-  var starsMaterial = new THREE.PointsMaterial( { color: 0xcccccc, size: 1 } )
+  var starsMaterial = new THREE.PointsMaterial( { color: 0xcccccc, size: 0.05 } )
   var starField = new THREE.Points( starsGeometry, starsMaterial );
   scene.add( starField );
 

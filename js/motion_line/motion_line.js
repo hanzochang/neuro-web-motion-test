@@ -5,7 +5,7 @@ function MotionLine(length, speed, routeVertices){
   this.currentRouteVerticesNum = 0;
 
   var motionLineMaterial = new THREE.LineBasicMaterial({
-    color: 0x999999,
+    color: 0xffffff,
     linewidth: 1
   });
 
@@ -65,7 +65,6 @@ function MotionLine(length, speed, routeVertices){
 
   this.isReachEndVerticeX = function(startVertice, endVertice, currentVertice) {
     var comparePositiveness = ((endVertice[0] - startVertice[0]) >= 0);
-
     if (comparePositiveness) {
       if (currentVertice.x < currentEndVertice[0]){ return true; }
     } else {
@@ -77,7 +76,6 @@ function MotionLine(length, speed, routeVertices){
 
   this.isReachEndVerticeY = function(startVertice, endVertice, currentVertice) {
     var comparePositiveness = ((endVertice[1] - startVertice[1]) >= 0);
-
     if (comparePositiveness) {
       if (currentVertice.y < currentEndVertice[1]){ return true; }
     } else {
