@@ -25,6 +25,11 @@ function routeVerticesFactory(pivot, gridBase, rootVerticesNum, rangeUnit = 4){
     return this.rootVertices;
   }
 
+  this.createUpper = function(){
+    this.createRootVerticesUpper(pivot);
+    return this.rootVertices;
+  }
+
   // private
   this.createRootVertices = function(startPoint){
     // console.log(startPoint);
@@ -37,9 +42,6 @@ function routeVerticesFactory(pivot, gridBase, rootVerticesNum, rangeUnit = 4){
       nextStartPoint = new THREE.Vector3(this.expandValuePositively(startPoint.x),
                                          this.expandValuePositively(startPoint.y),
                                          startPoint.z);
-      // nextStartPoint = new THREE.Vector3(this.expandValuePositively(startPoint.x),
-                                         // this.expandValuePositively(startPoint.y),
-                                         // this.expandValuePositively(startPoint.z));
     } else if (rand < 0.50) {
       nextStartPoint = new THREE.Vector3(this.expandValueNegatively(startPoint.x),
                                          this.expandValuePositively(startPoint.y),
@@ -52,13 +54,60 @@ function routeVerticesFactory(pivot, gridBase, rootVerticesNum, rangeUnit = 4){
       nextStartPoint = new THREE.Vector3(this.expandValueNegatively(startPoint.x),
                                          this.expandValueNegatively(startPoint.y),
                                          startPoint.z);
-      // nextStartPoint = new THREE.Vector3(this.expandValueNegatively(startPoint.x),
-                                         // this.expandValueNegatively(startPoint.y),
-                                         // this.expandValuePositively(startPoint.z));
     }
+
+    // if (nextStartPoint == this.pivot) {
+      // this.rootVerticesNum -= 1;
+      // this.createRootVertices(StartPoint);
+    // } else {
+      // this.rootVerticesNum -= 1;
+      // this.createRootVertices(nextStartPoint);
+    // }
 
     this.rootVerticesNum -= 1;
     this.createRootVertices(nextStartPoint);
+  }
+
+  this.createRootVerticesUpper = function(startPoint){
+    // console.log(startPoint);
+    this.rootVertices.push(startPoint);
+    if (this.rootVerticesNum < 0) { return; }
+
+    // イテレータにする
+    var rand = Math.random();
+    var nextStartPoint;
+    if (rand < 0.2) {
+      nextStartPoint = new THREE.Vector3(this.expandValuePositively(startPoint.x),
+                                         this.expandValuePositively(startPoint.y),
+                                         startPoint.z);
+    } else if (rand < 0.4) {
+      nextStartPoint = new THREE.Vector3(startPoint.x,
+                                         startPoint.y,
+                                         this.expandValuePositively(startPoint.z));
+    } else if (rand < 0.6) {
+      nextStartPoint = new THREE.Vector3(this.expandValueNegatively(startPoint.x),
+                                         this.expandValuePositively(startPoint.y),
+                                         startPoint.z);
+    } else if (rand < 0.8) {
+      nextStartPoint = new THREE.Vector3(this.expandValuePositively(startPoint.x),
+                                         this.expandValueNegatively(startPoint.y),
+                                         startPoint.z);
+    } else {
+      nextStartPoint = new THREE.Vector3(this.expandValueNegatively(startPoint.x),
+                                         this.expandValueNegatively(startPoint.y),
+                                         startPoint.z);
+    }
+
+    // if (nextStartPoint == this.pivot) {
+      // this.rootVerticesNum -= 1;
+      // this.createRootVerticesUpper(StartPoint);
+    // } else {
+      // this.rootVerticesNum -= 1;
+      // this.createRootVerticesUpper(nextStartPoint);
+    // }
+
+    this.rootVerticesNum -= 1;
+    this.createRootVerticesUpper(nextStartPoint);
   }
 
   this.expandValuePositively = function (value) {

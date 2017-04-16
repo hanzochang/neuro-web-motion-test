@@ -28,7 +28,7 @@ function init() {
   manager = new WebVRManager(renderer, effect);
 
   dolly = new THREE.Group();
-  dolly.position.set( 0, -1, 8 );
+  dolly.position.set( 0, -1.5, 8 );
   dolly.rotateZ = 10;
   scene.add(dolly);
   dolly.add(camera);
